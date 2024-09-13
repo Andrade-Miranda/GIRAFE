@@ -1,5 +1,4 @@
-<h2><u> GIRAFE </u></h2>
-<p><strong>GIRAFE</strong>: <strong>G</strong>lottal <strong>I</strong>maging <strong>R</strong>epository for <strong>A</strong>dvanced Segmentation, Analysis, and <strong>F</strong>ast <strong>E</strong>valuation</p>
+<h2><u> GIRAFE </u></h2>: <strong>G</strong>lottal <strong>I</strong>maging <strong>R</strong>epository for <strong>A</strong>dvanced Segmentation, Analysis, and <strong>F</strong>ast <strong>E</strong>valuation</p>
 
 ![](GIRAFE.png)
 
