@@ -1,7 +1,10 @@
-# GIRAFE
+# GIRAFE 
 GIRAFE: Glottal Imaging Repository for Advanced Segmentation, Analysis, and Fast Evaluation
-
-!(Girafe.png)
+<img 
+  src="girafe.png"
+  width="200"
+  height="100"
+>
 
 <h2><u>Introduction</u></h2>
 
