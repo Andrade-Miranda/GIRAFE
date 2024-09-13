@@ -1,4 +1,4 @@
-<h2><u> GIRAFE </u></h2>: 
+<h2><u> GIRAFE </u></h2>
 ## GIRAFE: **G**lottal **I**maging **R**epository for **A**dvanced Segmentation, Analysis, and **F**ast **E**valuation
 
 ![](GIRAFE.png)
