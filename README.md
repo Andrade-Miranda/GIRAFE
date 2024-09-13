@@ -8,20 +8,16 @@ Welcome to the GIRAFE Database repository! This is a comprehensive collection of
 
 <h2><u>Repository Structure</u></h2>
 
-**1. 'main.py' located indide '_ main _' folder:**
-
-   **Purpose:**
-  
-   
-  **Key Points:**
+1. **DL_code folder:**
 
   
-**2. 'dataset.py' located inside 'preprocessing' folder:** 
-
- **Purpose:**
+2. **Matlab_code folder:**
 
 
-**Key Focus Areas:**
+3. **Matlab_code.ipynb:**
+
+
+4. **Seg_FP-Results.ipynb:**
 
 
 <h2><u>Quick Start</u></h2>
