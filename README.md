@@ -29,9 +29,6 @@ You can download the dataset files directly from Zenodo.
 
 For more information and specific setup instructions, refer to the dataset documentation on Zenodo.
 
-**Note:** This repository contains the code used for cleaning and calculating the database.
-
-
 <h2><u>How to Cite</u></h2>
 If you use the CUCO Database in your research or projects, we kindly request that you cite it to give credit to the contributors. Please use the following references to cite the database:
 
