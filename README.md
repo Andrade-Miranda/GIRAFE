@@ -1,13 +1,10 @@
 <h2><u> GIRAFE </u></h2>
-## GIRAFE: **G**lottal **I**maging **R**epository for **A**dvanced Segmentation, Analysis, and **F**ast **E**valuation
 
-![](GIRAFE.png)
+**G**lottal **I**maging **R**epository for **A**dvanced Segmentation, Analysis, and **F**ast **E**valuation
 
-This repository contains the code for my master's thesis, titled: **"Optimized Prompting in SAM for Few-Shot and Weakly Supervised Segmentation of Complex Structures and Small Lesions"**, which as accepted at the **MICCAI 2024 2nd International Workshop on Foundation Models for General Medical AI**. In this project, we fine-tune the decoder part of the SAM (Segment Anything Model) using the Vanilla method, where all parameters are updated during training, as depicted in Figure 1. 
+<img src="GIRAFE.png" alt="GIRAFE" width="300"/>
 
-Our study explores prompt-guided strategies in SAM for medical image segmentation under few-shot and weakly supervised scenarios. We assess various strategies—such as bounding boxes, positive points, negative points, and their combinations—to optimize the segmentation process.
-
-![Figure 1/ SAM Setup](Figure1.png)
+Welcome to the GIRAFE Database repository! This is a comprehensive collection of code and data used for cleaning and calculating the CUCO database. The database comprises recordings of patients and control individuals, with voice samples taken at three different time points: 2 weeks before surgery, 2 weeks after surgery, and 3 months after surgery. The surgeries include FESS, Tonsillectomy, Septoplasty, and a control group.
 
 <h2><u>Repository Structure</u></h2>
 
@@ -15,116 +12,48 @@ Our study explores prompt-guided strategies in SAM for medical image segmentatio
 
    **Purpose:**
   
-  This is the main script where the SAM model is defined and the training process is executed. The 'SAMDataset' function, which is critical for loading and preprocessing the dataset, is included here.
    
   **Key Points:**
-  
-  - Handles the setup for training and evaluation of the SAM model.
-  - Includes the function 'SAMDataset', which you need to configure for your specific dataset.
-  - Handles the prompts you wish to use: these prompts are provided as inputs to the model. If there are prompts you do not want to use, you should set them to `None`.
-    
-  ```python
-    outputs = model(pixel_values=batch["pixel_values"].to(device),
-                    input_boxes=batch["input_boxes"].to(device),# Use this prompt
-                    input_points=None,# Other prompts set to None
-                    input_labels=None, # Other prompts set to None
-                    multimask_output=False)  # set to 'True' if you want multi-mask output
-  ``` 
-  **Note:** 'input_points' and 'input_labels' prompts should be used together 
 
+  
 **2. 'dataset.py' located inside 'preprocessing' folder:** 
 
  **Purpose:**
 
-This file provides a template for setting up your dataset, including necessary transformations and preprocessing steps tailored to your data. 
-You don't need to run the 'dataset.py' file directly; the 'SAMDataset' function is invoked within the 'main.py' file during training.
 
 **Key Focus Areas:**
 
-- 'ScaleIntensityRanged' Transform:
-   - For images: Adjust the 'a_min' and 'a_max' parameters to match the intensity range of your dataset.
-     
-   - For labels: Set the 'a_min' and 'a_max' parameters according to the intensity range of your labels.
-     If your labels are already binarized (values of 0 and 1), you can skip this transformation for labels.
-    
--  Handling of Prompts Functions.
-
-**Note:** For detailed guidance on setting up your own dataset and configuring the prompts functions, please refer to the 'README.md' file located in the 'preprocessing' folder.
-
-**3. 'train.py':** 
-
- **Purpose:**
- 
-This file is used to execute the main training script and run the training process.
-
-**4. 're-train.py':** 
-
- **Purpose:**
-
-This file allows you to continue training from a specific epoch by loading the previous model checkpoints.
-
-**4. 'inference.py':** 
-
- **Purpose:**
-
- This file is used to perform testing using the test set.
- 
-**5. 'requirements.py':** 
-
- **Purpose:**
-
-Lists all the Python dependencies required to run this project.
-
-Ensure you install all the required packages using the following command:
-
-```python
-pip install -r requirements.txt
-```
 
 <h2><u>Quick Start</u></h2>
 
-**Install**
+The **GIRAFE** Database is available on Zenodo with a Digital Object Identifier (DOI) to ensure easy access and citation. To access the database, follow these steps:
 
-- Step 1:
+Visit the Zenodo page for the **GIRAFE** Database using the following link: GIRAFE Database on Zenodo
+You can download the dataset files directly from Zenodo.
 
-```python
-pip install -q monai
-pip install -q git+https://github.com/huggingface/transformers.git
-pip install -r requirements.txt
-```
+For more information and specific setup instructions, refer to the dataset documentation on Zenodo.
 
-- Step 2: Download the SAM weights from [SAM repository](https://github.com/facebookresearch/segment-anything#model-checkpoints)
+**Note:** This repository contains the code used for cleaning and calculating the database.
 
-**Train and Test**
 
-- Step 1: Modify the prompting function, select the prompts you wish to use, and adjust the preprocessing steps for ''SAMDataset' in the 'main.py' file.
+<h2><u>How to Cite</u></h2>
+If you use the CUCO Database in your research or projects, we kindly request that you cite it to give credit to the contributors. Please use the following references to cite the database:
 
-- Step 2: To execute the training, run the 'train.py' file. If you wish to resume training from a specific epoch, run the 're-train.py' file instead.
-  Before doing so, make sure to modify the paths to match your setup.
-  
-- Step 3: To perform testing, run the 'inference.py' file. Be sure to update the paths to match your setup before executing it.
+1. **Zenodo Dataset**:  
+   To cite the dataset available on Zenodo, use the provided DOI:
+   > Hernández-García, E., Guerrero-López, A., Arias-Londoño, J. D., & Godino Llorente, J. I. (2024). CUCO Database: A voice and speech corpus of patients who underwent upper airway surgery in pre- and post-operative states [Data set]. Zenodo. [https://doi.org/10.5281/zenodo.10256802](https://doi.org/10.5281/zenodo.10256802)
 
-<h2><u>Acknowlegments</u></h2>
-The code presented in this repository builds upon and integrates concepts from the following resources:
+2. **Scientific Data Paper**:  
+   Additionally, cite the associated paper in the *Scientific Data* journal where the database is described in detail:
+   > Hernández-García, E., Guerrero-López, A., Arias-Londoño, J.D. et al. A voice and speech corpus of patients who underwent upper airway surgery in pre- and post-operative states. *Sci Data* 11, 746 (2024). [https://doi.org/10.1038/s41597-024-03540-5](https://doi.org/10.1038/s41597-024-03540-5)
 
-- [SAM](https://github.com/facebookresearch/segment-anything)
+Citing both the Zenodo dataset and the journal paper helps acknowledge the work of the contributors and ensures proper recognition in the academic community.
 
-- [finetune-SAM](https://github.com/mazurowski-lab/finetune-SAM?tab=readme-ov-file)
-  
-- [MedSAM](https://github.com/bowang-lab/MedSAM)
-  
-- [LoRA for SAM](https://github.com/JamesQFreeman/Sam_LoRA)
-  
-- [Medical SAM Adapter](https://github.com/MedicineToken/Medical-SAM-Adapter)
 
-<h2><u>Citation</u></h2>
-Please cite our paper if you use our code or reference our work:
+<h2><u>Usage</u></h2>
 
-```python
-@inproceedings{Siblini2024SAM,
-  title={Optimal Prompting in SAM for Few-Shot and Weakly Supervised Medical Image Segmentation},
-  author={Siblini, Lara and Andrade-Miranda, Gustavo and Taguelmimt, Kamilia and Visvkis, Dimitris and Bert, Julien},
-  booktitle={MICCAI 2024 2nd International Workshop on Foundation Models for General Medical AI. Accepted on July 15},
-  year={2024},
-}
-```
+<h2><u>License</u></h2>
+
+<h2><u>Credits</u></h2>
+
+<h2><u>Contact Information</u></h2>
