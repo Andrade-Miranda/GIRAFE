@@ -1,10 +1,7 @@
 <h2><u> GIRAFE </u></h2>
-GIRAFE: Glottal Imaging Repository for Advanced Segmentation, Analysis, and Fast Evaluation
-<img 
-  src="girafe.png"
-  width="200"
-  height="100"
->
+GIRAFE: **G**lottal **I**maging **R**epository for **A**dvanced Segmentation, Analysis, and **F**ast **E**valuation
+
+![](GIRAFE.png)
 
 This repository contains the code for my master's thesis, titled: **"Optimized Prompting in SAM for Few-Shot and Weakly Supervised Segmentation of Complex Structures and Small Lesions"**, which as accepted at the **MICCAI 2024 2nd International Workshop on Foundation Models for General Medical AI**. In this project, we fine-tune the decoder part of the SAM (Segment Anything Model) using the Vanilla method, where all parameters are updated during training, as depicted in Figure 1. 
 
