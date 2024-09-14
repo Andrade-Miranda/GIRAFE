@@ -9,8 +9,8 @@ from monai.utils import set_determinism
 import matplotlib.pyplot as plt
 import numpy as np
 
-from monai.losses import DiceLoss,DiceCELoss,MaskedDiceLoss,DiceFocalLoss
-from monai.inferers import SimpleInferer,SlidingWindowInferer
+from monai.losses import DiceLoss
+from monai.inferers import SimpleInferer
 from monai import transforms
 from monai.transforms import (
     AsDiscrete,
@@ -96,32 +96,18 @@ def get_loader(batch_size, json_list, roi):
   
     train_transform = transforms.Compose(
         [  
-            transforms.LoadImaged(keys=["image"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("L")),dtype='float',image_only=False),
-            transforms.LoadImaged(keys=["label"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("L")),dtype='uint8',image_only=False),EnsureChannelFirstd(keys=["image","label"]),
-            transforms.ScaleIntensityRanged(keys=["label"], a_min=0, a_max=255, b_min=0,b_max=1,clip=True,dtype='uint8'),
-            transforms.ScaleIntensityRangePercentilesd(keys=["image"], lower=1, upper=99, b_min=0,b_max=1, clip=True),
-            #transforms.Resized(keys=["image"], spatial_size=(roi[0], roi[1]), mode="bilinear"),
-            #transforms.Resized(keys=["label"], spatial_size=(roi[0], roi[1]), mode="nearest-exact"),
-            #transforms.RandCropByPosNegLabeld(
-            #        keys=["image", "label"],
-            #        label_key="label",
-            #        spatial_size=(roi[0], roi[1]),
-            #        pos=3,
-            #        neg=1,
-            #        num_samples=2,
-            #        image_key="image",
-            #        image_threshold=0,
-            #        ),
-            #transforms.ScaleIntensityRanged(keys=["image"], a_min=10, a_max=225, b_min=-1,b_max=1,clip=True),
+            transforms.LoadImaged(keys=["image"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("RGB")),dtype='float',image_only=True),
+            transforms.LoadImaged(keys=["label"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("1")),dtype='uint8',image_only=True),
+            EnsureChannelFirstd(keys=["image","label"]),
+            transforms.ScaleIntensityRangePercentilesd(keys=["image"], lower=1, upper=99, b_min=0,b_max=1, clip=True,dtype=np.float32),
+            transforms.Resized(keys=["image"], spatial_size=(roi[0], roi[1]), mode="bilinear"),
+            transforms.Resized(keys=["label"], spatial_size=(roi[0], roi[1]), mode="nearest-exact"),
+
             #transforms.RandFlipd(keys=["image", "label"], prob=0.5, spatial_axis=0),
             #transforms.RandFlipd(keys=["image", "label"], prob=0.5, spatial_axis=1),
-            
-            #transforms.RandRotated(keys=["image", "label"],mode=("bilinear", "nearest"),range_x=np.pi/6,range_y=np.pi/6),
+            #transforms.RandRotated(keys=["image", "label"],mode=("bilinear", "nearest-exact"),range_x=np.pi/6,range_y=np.pi/6),
 
-            #transforms.RandAffined(keys=["image", "label"],prob=0.7,shear_range=(0.5,0.5),mode=['bilinear','nearest'],padding_mode='zeros'),
-            #transforms.NormalizeIntensityd(keys="image", nonzero=True, channel_wise=True),
-            #transforms.HistogramNormalized(keys=["image"],num_bins=256,min=-1,max=1),
-            
+            #transforms.RandAffined(keys=["image", "label"],prob=0.7,shear_range=(0.5,0.5),mode=['bilinear','nearest'],padding_mode='zeros'),            
             #transforms.RandAdjustContrastd(keys=["image"],prob=1,gamma=(0.8,1.2)),
             
             #transforms.RandScaleIntensityd(keys="image", factors=0.1, prob=1.0),
@@ -130,13 +116,12 @@ def get_loader(batch_size, json_list, roi):
     )
     val_transform = transforms.Compose(
         [
-            transforms.LoadImaged(keys=["image"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("L")),dtype='float',image_only=False),
-            transforms.LoadImaged(keys=["label"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("L")),dtype='uint8',image_only=False),
+            transforms.LoadImaged(keys=["image"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("RGB")),dtype='float',image_only=False),
+            transforms.LoadImaged(keys=["label"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("1")),dtype='uint8',image_only=False),
             EnsureChannelFirstd(keys=["image","label"]),
-            transforms.ScaleIntensityRanged(keys=["label"], a_min=0, a_max=255, b_min=0.0,b_max=1.0,clip=True,dtype='uint8'),
             transforms.ScaleIntensityRangePercentilesd(keys=["image"], lower=1, upper=99, b_min=0,b_max=1, clip=True),
-            #transforms.Resized(keys=["image"], spatial_size=(roi[0], roi[1]), mode="bilinear"),
-            #transforms.Resized(keys=["label"], spatial_size=(roi[0], roi[1]), mode="nearest-exact")
+            transforms.Resized(keys=["image"], spatial_size=(roi[0], roi[1]), mode="bilinear"),
+            transforms.Resized(keys=["label"], spatial_size=(roi[0], roi[1]), mode="nearest-exact")
             ]
        )
 
@@ -422,7 +407,7 @@ if __name__ == "__main__":
     json_list = '../GIRAFE/Training/training.json'
     roi = (256, 256)  
     batch_size = 8
-    max_epochs =10
+    max_epochs =100
     val_every = 2
     lr=2e-4
     seed=1234
@@ -430,7 +415,7 @@ if __name__ == "__main__":
     debug=False
     project_name='Glottis'
     model_name='Unet'
-    channels=(32,64,128,256)
+    channels=(16,32,64,128)
     strides=(2,2,2,2)
     nameRun_detail='normlize0_1-debug'
     dir_wandb=os.path.join(os.getcwd(),'wandb')
@@ -444,7 +429,6 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Create a dictionary from local variables
-    #nameRun_detail='pretrained'
     opt = {k: v for k, v in locals().items() if k in ['json_list', 'roi', 'batch_size','max_epochs','val_every','lr','seed','wandb_act','project_name','model_name','nameRun_detail','dir_wandb','nameRun','debug','strides','channels']}
     opt['device']=device
 
@@ -467,7 +451,7 @@ if __name__ == "__main__":
     if model_name=='Unet':
         model = UNet(
             spatial_dims=2,
-            in_channels=1,
+            in_channels=3,
             out_channels=1,
             channels=channels,
             strides=strides,
@@ -481,24 +465,13 @@ if __name__ == "__main__":
 ########################################################################
 
 ## Optimizer and loss function
-    #dice_loss = DiceCELoss(smooth_nr=0, smooth_dr=1e-5, squared_pred=False, to_onehot_y=True, softmax=True)
-    #dice_loss = DiceLoss(to_onehot_y=True, softmax=True)
     dice_loss = DiceLoss(to_onehot_y=False, sigmoid=True)
-    #dice_loss = DiceFocalLoss(to_onehot_y=True, softmax=True,weight=[1,10])
-    #dice_loss = MaskedDiceLoss( to_onehot_y=False, sigmoid=True)
     post_trans = Compose([Activations(sigmoid=True), AsDiscrete(threshold=0.3)])
-    #post_trans = Compose([AsDiscrete(argmax=True, to_onehot=2)])
-    #post_label = Compose([AsDiscrete(to_onehot=2)])
     dice_val = DiceMetric(include_background=True, reduction="mean", get_not_nans=True)
     dice_Train = DiceMetric(include_background=True, reduction="mean", get_not_nans=True)
     dice_Test = DiceMetric(include_background=True, reduction="mean", get_not_nans=True)
 
     model_inferer = SimpleInferer()
-    #model_inferer = SlidingWindowInferer(
-    #                            roi_size=roi, 
-    #                            overlap=0.5, 
-    #                            mode='gaussian',
-    #                            sw_batch_size=1)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-5) 
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs) 
