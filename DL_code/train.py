@@ -5,6 +5,7 @@ import tempfile
 import time
 import random
 from monai.utils import set_determinism
+from PIL import Image
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -57,7 +58,7 @@ class AverageMeter(object):
         self.avg = np.where(self.count > 0, self.sum / self.count, self.sum)
 
 def restore_Model(file,model,opt):
-    checkpoint = torch.load(file,map_location=opt['device'])
+    checkpoint = torch.load(file,map_location=opt['device'],weights_only=True)
     if 'model_state_dict' in checkpoint:
         model.load_state_dict(
             checkpoint['model_state_dict'],strict=False)
@@ -73,8 +74,8 @@ def datafold_read(datalist):
     with open(datalist) as f:
         json_data = json.load(f)
 
-    train = json_data["Training"][:-60]
-    val = json_data["Training"][-60:]
+    train = json_data["Training"]
+    val = json_data["Val"]
     test= json_data["test"]
     return train, val, test
 ##############################################################################
@@ -96,16 +97,16 @@ def get_loader(batch_size, json_list, roi):
   
     train_transform = transforms.Compose(
         [  
-            transforms.LoadImaged(keys=["image"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("RGB")),dtype='float',image_only=True),
-            transforms.LoadImaged(keys=["label"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("1")),dtype='uint8',image_only=True),
+            transforms.LoadImaged(keys=["image"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("RGB")),dtype='float',image_only=False),
+            transforms.LoadImaged(keys=["label"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("1")),dtype='uint8',image_only=False),
             EnsureChannelFirstd(keys=["image","label"]),
-            transforms.ScaleIntensityRangePercentilesd(keys=["image"], lower=1, upper=99, b_min=0,b_max=1, clip=True,dtype=np.float32),
+            transforms.ScaleIntensityRangePercentilesd(keys=["image"], lower=1, upper=99, b_min=-1,b_max=1, clip=True,dtype=np.float32),
             transforms.Resized(keys=["image"], spatial_size=(roi[0], roi[1]), mode="bilinear"),
             transforms.Resized(keys=["label"], spatial_size=(roi[0], roi[1]), mode="nearest-exact"),
 
             #transforms.RandFlipd(keys=["image", "label"], prob=0.5, spatial_axis=0),
             #transforms.RandFlipd(keys=["image", "label"], prob=0.5, spatial_axis=1),
-            #transforms.RandRotated(keys=["image", "label"],mode=("bilinear", "nearest-exact"),range_x=np.pi/6,range_y=np.pi/6),
+            #transforms.RandRotated(keys=["image", "label"],mode=("bilinear", "nearest"),range_x=np.pi/6,range_y=np.pi/6),
 
             #transforms.RandAffined(keys=["image", "label"],prob=0.7,shear_range=(0.5,0.5),mode=['bilinear','nearest'],padding_mode='zeros'),            
             #transforms.RandAdjustContrastd(keys=["image"],prob=1,gamma=(0.8,1.2)),
@@ -119,7 +120,7 @@ def get_loader(batch_size, json_list, roi):
             transforms.LoadImaged(keys=["image"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("RGB")),dtype='float',image_only=False),
             transforms.LoadImaged(keys=["label"],reader=PILReader(reverse_indexing=False,converter=lambda image: image.convert("1")),dtype='uint8',image_only=False),
             EnsureChannelFirstd(keys=["image","label"]),
-            transforms.ScaleIntensityRangePercentilesd(keys=["image"], lower=1, upper=99, b_min=0,b_max=1, clip=True),
+            transforms.ScaleIntensityRangePercentilesd(keys=["image"], lower=1, upper=99, b_min=-1,b_max=1, clip=True),
             transforms.Resized(keys=["image"], spatial_size=(roi[0], roi[1]), mode="bilinear"),
             transforms.Resized(keys=["label"], spatial_size=(roi[0], roi[1]), mode="nearest-exact")
             ]
@@ -136,7 +137,7 @@ def get_loader(batch_size, json_list, roi):
     val_ds = data.Dataset(data=validation_files, transform=val_transform)
     val_loader = data.DataLoader(
         val_ds,
-        batch_size=1,
+        batch_size=batch_size,
         shuffle=True,
         num_workers=4,
         pin_memory=True,
@@ -164,35 +165,12 @@ def train_epoch(model, loader, optimizer, epoch, loss_func,wandb_logger,debug,di
     run_loss = AverageMeter()
     for idx, batch_data in enumerate(loader):
         data, target = batch_data["image"].to(device), batch_data["label"].to(device)
-        #print(batch_data['image_meta_dict']['filename_or_obj'][0])
         logits = model(data.float())
 
         val_labels_list = decollate_batch(target)
         val_outputs_list = decollate_batch(logits)
         val_output_convert = [post_trans(val_pred_tensor) for val_pred_tensor in val_outputs_list]
-        #val_labels_list = [post_label(i) for i in decollate_batch(target)]
         dice_Train(y_pred=val_output_convert, y=val_labels_list)        
-
-        if  debug:# and epoch==1:
-            # Create a figure and subplots
-            fig, axs = plt.subplots(1, 3, figsize=(10, 10))
-            # Plot each image in a different subplot
-            axs[0].imshow(data[0][0].detach().cpu(),cmap="gray")
-            axs[0].set_title('Aug Original')
-            axs[1].imshow(np.moveaxis(target[0].detach().cpu(),[0], [-1]),cmap="gray")
-            axs[1].set_title('Label')
-            axs[2].imshow(np.moveaxis(val_output_convert[0].detach().cpu(),[0], [-1]),cmap="gray")
-            axs[2].set_title('Prediction')
-            # Remove axis ticks
-            for ax in axs.flat:
-                ax.axis('off')
-            # Adjust layout
-            plt.tight_layout()
-            # Add a common title for all subplots
-            fig.suptitle(batch_data['image_meta_dict']['filename_or_obj'][0].split('/')[-1], fontsize=16)
-            plt.show()
-            #plt.savefig(os.path.join(os.getcwd(),"Results",opt['model_name'],opt['nameRun'],batch_data['image_meta_dict']['filename_or_obj'][0].split('/')[-1].split('.')[0]+'.pdf'))
-
 
         loss = loss_func(logits, target)
         loss.backward()
@@ -228,20 +206,21 @@ def val_epoch(model, loader, epoch, acc_func, model_inferer=None, post_trans=Non
             val_labels_list = decollate_batch(target)
             val_outputs_list = decollate_batch(logits)
             val_output_convert = [post_trans(val_pred_tensor) for val_pred_tensor in val_outputs_list]
-            #val_labels_list = [post_label(i) for i in decollate_batch(target)]
 
             acc_func(y_pred=val_output_convert, y=val_labels_list)
 
             if  debug:
                 # Create a figure and subplots
-                fig, axs = plt.subplots(1, 3, figsize=(10, 10))
+                fig, axs = plt.subplots(2, 2, figsize=(10, 10))
                 # Plot each image in a different subplot
-                axs[0].imshow(data[0][0].detach().cpu(),cmap="gray")
-                axs[0].set_title('Aug Original')
-                axs[1].imshow(np.moveaxis(target[0].detach().cpu(),[0], [-1]),cmap="gray")
-                axs[1].set_title('Label')
-                axs[2].imshow(np.moveaxis(val_output_convert[0].detach().cpu(),[0], [-1]),cmap="gray")
-                axs[2].set_title('Prediction')
+                axs[0,0].imshow(data[0][0].detach().cpu().numpy(),cmap="gray")
+                axs[0,0].set_title('Aug Original')
+                axs[0,1].imshow(target[0][0].detach().cpu().numpy(),cmap="gray")
+                axs[0,1].set_title('Label')
+                axs[1,0].imshow(val_outputs_list[0][0].detach().cpu().numpy(),cmap="gray")
+                axs[1,0].set_title('Confidence map')
+                axs[1,1].imshow(val_output_convert[0][0].detach().cpu().numpy(),cmap="gray")
+                axs[1,1].set_title('Prediction')
                 # Remove axis ticks
                 for ax in axs.flat:
                     ax.axis('off')
@@ -249,7 +228,9 @@ def val_epoch(model, loader, epoch, acc_func, model_inferer=None, post_trans=Non
                 plt.tight_layout()
                 # Add a common title for all subplots
                 fig.suptitle(batch_data['image_meta_dict']['filename_or_obj'][0].split('/')[-1], fontsize=16)
-                plt.show()            
+                plt.show()
+                plt.savefig(os.path.join(os.getcwd(),"Results",opt['model_name'],opt['nameRun'],str(idx)+'.pdf'))
+            
 
         average_dice = acc_func.aggregate()[0].item()    
         print(
@@ -280,26 +261,11 @@ def test_data(model, loader, acc_func, model_inferer=None, post_trans=None,wandb
             val_output_convert = [post_trans(val_pred_tensor) for val_pred_tensor in val_outputs_list]
 
             acc_func(y_pred=val_output_convert, y=val_labels_list)
+            filename=os.path.join(os.getcwd(),"Results",opt['model_name'],opt['nameRun'],batch_data['image_meta_dict']['filename_or_obj'][0].split('/')[-1].split('.')[0]+'.png')
 
-            fig, axs = plt.subplots(1, 3, figsize=(10, 10))
-            # Plot each image in a different subplot
-            axs[0].imshow(data[0][0].detach().cpu(),cmap="gray")
-            axs[0].set_title('Aug Original')
-            axs[1].imshow(target[0][0].detach().cpu(),cmap="gray")
-            axs[1].set_title('Label')
-            axs[2].imshow(val_output_convert[0][0].detach().cpu(),cmap="gray")
-            axs[2].set_title('Prediction')
-            # Remove axis ticks
-            for ax in axs.flat:
-                ax.axis('off')
-            # Adjust layout
-            plt.tight_layout()
-            # Add a common title for all subplots
-            fig.suptitle(batch_data['image_meta_dict']['filename_or_obj'][0].split('/')[-1], fontsize=16)
-            plt.show()
-            plt.savefig(os.path.join(os.getcwd(),"Results",opt['model_name'],opt['nameRun'],batch_data['image_meta_dict']['filename_or_obj'][0].split('/')[-1].split('.')[0]+'.pdf'))
-            plt.close()
-
+            im = Image.fromarray(val_output_convert[0][0].detach().cpu().numpy().astype(np.uint8)*255)
+            im.save(filename)
+                
         average_dice = acc_func.aggregate()[0].item()    
         print(
                 "Avg Dice Coeff: ", average_dice
@@ -406,18 +372,18 @@ if __name__ == "__main__":
     os.chdir(os.path.join(os.getcwd(),root_dir))
     json_list = '../GIRAFE/Training/training.json'
     roi = (256, 256)  
-    batch_size = 8
+    batch_size = 16
     max_epochs =100
     val_every = 2
     lr=2e-4
-    seed=1234
+    seed=3456
     wandb_act=False#True
-    debug=False
+    debug=True
     project_name='Glottis'
     model_name='Unet'
     channels=(16,32,64,128)
-    strides=(2,2,2,2)
-    nameRun_detail='normlize0_1-debug'
+    strides=(2,2,2)
+    nameRun_detail='Baseline'
     dir_wandb=os.path.join(os.getcwd(),'wandb')
     nameRun=model_name+'_'+str(batch_size)+'_'+str(max_epochs)+'_'+str(lr)+'_'+str(roi[0])+'_'+nameRun_detail
     #######################################################################################################
@@ -466,7 +432,7 @@ if __name__ == "__main__":
 
 ## Optimizer and loss function
     dice_loss = DiceLoss(to_onehot_y=False, sigmoid=True)
-    post_trans = Compose([Activations(sigmoid=True), AsDiscrete(threshold=0.3)])
+    post_trans = Compose([Activations(sigmoid=True), AsDiscrete(threshold=0.5)])
     dice_val = DiceMetric(include_background=True, reduction="mean", get_not_nans=True)
     dice_Train = DiceMetric(include_background=True, reduction="mean", get_not_nans=True)
     dice_Test = DiceMetric(include_background=True, reduction="mean", get_not_nans=True)
