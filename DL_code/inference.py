@@ -31,9 +31,9 @@ from utils.swinv2Unet import SwinV2OneDecoder
 #############################################################################
 def restore_Model(file,model,device):
     checkpoint = torch.load(file,map_location=device,weights_only=True)
-    if 'model_state_dict' in checkpoint:
+    if 'state_dict' in checkpoint:
         model.load_state_dict(
-            checkpoint['model_state_dict'],strict=False)
+            checkpoint['state_dict'],strict=False)
     else:
         model.load_state_dict(
             checkpoint,strict=False)
@@ -81,7 +81,7 @@ def get_loader(json_list, roi):
 
 
 ## Define test  ####################################################################################################
-def test_data(model, loader, acc_func,model_name, nameRun,device,model_inferer=None, post_trans=None,wandb_logger=None):
+def test_data(model, loader, acc_func,model_name, nameRun,device,model_inferer=None, post_trans=None):
     
     pathmodel = os.path.join(os.getcwd(),'GIRAFE','DL_code',"Results",model_name,nameRun,'model.pt')
     model=restore_Model(pathmodel,model,device)
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     batch_size = 8
     channels=(16,32,64,128)
     strides=(2,2,2)
-    nameRun='Unet_8_100_0.0002_256_Baseline'
+    nameRun='Unet_16_100_0.0002_256_Baseline'
     #######################################################################################################
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

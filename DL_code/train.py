@@ -59,9 +59,9 @@ class AverageMeter(object):
 
 def restore_Model(file,model,opt):
     checkpoint = torch.load(file,map_location=opt['device'],weights_only=True)
-    if 'model_state_dict' in checkpoint:
+    if 'state_dict' in checkpoint:
         model.load_state_dict(
-            checkpoint['model_state_dict'],strict=False)
+            checkpoint['state_dict'],strict=False)
     else:
         model.load_state_dict(
             checkpoint,strict=False)
@@ -84,7 +84,7 @@ def datafold_read(datalist):
 ###################Save chckpoints############################################
 def save_checkpoint(model, epoch,opt, filename="model.pt", best_acc=0):
     state_dict = model.state_dict()
-    save_dict = {"epoch": epoch, "best_acc": best_acc, "state_dict": state_dict}
+    save_dict = {"epoch": epoch, "best_acc": best_acc, "model_state_dict": state_dict}
     pathmodel = os.path.join(os.getcwd(),"Results",opt['model_name'],opt['nameRun'],filename)
     torch.save(save_dict, pathmodel)
     print("Saving checkpoint", filename)
@@ -321,7 +321,7 @@ def trainer(
             "time {:.2f}s".format(time.time() - epoch_time),
         )
         
-        if (epoch ) % val_every == 0 or epoch == start_epoch:
+        if (epoch ) % val_every == 0 :
             loss_epochs.append(train_loss)
             trains_epoch.append(int(epoch))
             epoch_time = time.time()
@@ -373,7 +373,7 @@ if __name__ == "__main__":
     json_list = '../GIRAFE/Training/training.json'
     roi = (256, 256)  
     batch_size = 16
-    max_epochs =100
+    max_epochs =200
     val_every = 2
     lr=2e-4
     seed=3456
