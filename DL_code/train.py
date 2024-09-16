@@ -113,7 +113,7 @@ def get_loader(batch_size, json_list, roi,MoreDA):
                 transforms.RandScaleIntensityd(keys="image", factors=0.1, prob=1.0),
                 transforms.RandShiftIntensityd(keys="image", offsets=0.1, prob=1.0),
             ])
-        train_transform=transforms.Compose(train_transform,extra_transform)
+        train_transform=transforms.Compose([train_transform,extra_transform])
     
     
     val_transform = transforms.Compose(
@@ -380,7 +380,8 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int, default=1234, help='# of seed for deterministic training')
     parser.add_argument('--wandb_act', dest='wandb_act',action='store_true', default=False, help='activate wandb')  
     parser.add_argument('--debug', dest='debug',action='store_true', default=False, help='debugging during validation')  
-    parser.add_argument("--project_name", type=str, required=False,default='Glottis',help="Wandb project name")    
+    parser.add_argument("--project_name", type=str, required=False,default='Glottis',help="Wandb project name")
+    parser.add_argument("--entity", type=str, required=False,default='xamus86',help="wandb project entity")      
     parser.add_argument("--model_name", type=str, default='Unet',help="DL model")    
     parser.add_argument('--channels', nargs='+', default=(16,32,64,128), help='filters for the CNN network')
     parser.add_argument('--strides', nargs='+', default=(2,2,2), help='strides for the CNN network')
@@ -409,7 +410,7 @@ if __name__ == "__main__":
 
     if opt.wandb_act:
         wandb_logger = wandb.init(project=opt.project_name,
-                                      entity="xamus86",
+                                      entity=opt.entity,
                                       config=opt,
                                       name=opt.nameRun,
                                     dir=opt.dir_wandb)
