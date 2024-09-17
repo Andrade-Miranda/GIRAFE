@@ -374,7 +374,7 @@ if __name__ == "__main__":
                         help="Path of the json file used for training, validation and test")
     parser.add_argument("--roi", type=int, nargs=3, default= (256, 256) , help='Image Size')
     parser.add_argument('--batch_size', type=int, default=8, help='# the batchsize')
-    parser.add_argument('--max_epochs', type=int, default=10, help='number of epochs')
+    parser.add_argument('--max_epochs', type=int, default=100, help='number of epochs')
     parser.add_argument('--val_every', type=int, default=2, help='number of epochs to wait to perform validation')
     parser.add_argument('--lr', type=float, default=2e-4, help='learning rate')
     parser.add_argument('--seed', type=int, default=1234, help='# of seed for deterministic training')
@@ -396,6 +396,7 @@ if __name__ == "__main__":
     ## Set dataset root directory and hyper-parameters
     os.chdir(os.path.join(os.getcwd(),'DL_code'))
     opt.nameRun=opt.model_name+'_'+str(opt.batch_size)+'_'+str(opt.max_epochs)+'_'+str(opt.lr)+'_'+str(opt.roi[0])+'_'+opt.nameRun_detail
+    opt.dir_wandb=os.path.join(os.getcwd(),'wandb')
     #######################################################################################################
 
     set_determinism(opt.seed)
@@ -435,7 +436,7 @@ if __name__ == "__main__":
             norm=Norm.BATCH,
             ).to(opt.device)
     elif opt.model_name=='Swinv2':
-        model = SwinV2OneDecoder(img_size=opt.roi).to(opt.device)
+        model = SwinV2OneDecoder(pretrained=False,img_size=opt.roi).to(opt.device)
     else:
         raise ValueError("model not found")
 ########################################################################
