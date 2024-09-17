@@ -382,7 +382,7 @@ if __name__ == "__main__":
     parser.add_argument('--debug', dest='debug',action='store_true', default=False, help='debugging during validation')  
     parser.add_argument("--project_name", type=str, required=False,default='Glottis',help="Wandb project name")
     parser.add_argument("--entity", type=str, required=False,default='xamus86',help="wandb project entity")      
-    parser.add_argument("--model_name", type=str, default='Unet',help="DL model")    
+    parser.add_argument("--model_name", type=str, default='Unet',help="DL model")  #options 'Unet' and 'Swinv2'  
     parser.add_argument('--channels', nargs='+', default=(16,32,64,128), help='filters for the CNN network')
     parser.add_argument('--strides', nargs='+', default=(2,2,2), help='strides for the CNN network')
     parser.add_argument("--nameRun_detail", type=str, required=False,default='Baseline',help="name of the current running")    
