@@ -387,7 +387,7 @@ if __name__ == "__main__":
     parser.add_argument('--strides', nargs='+', default=(2,2,2), help='strides for the CNN network')
     parser.add_argument("--nameRun_detail", type=str, required=False,default='Baseline',help="name of the current running")    
     parser.add_argument('--MoreDA', dest='MoreDA',action='store_true', default=False, help='include extra data augmentation') 
-    parser.add_argument('--device', type=str, required=False,default='cuda',help="cehck cuda or cpu device")  
+    parser.add_argument('--device', type=str, required=False,default='cuda',help="check cuda or cpu device")  
 
 
     opt = parser.parse_args()
