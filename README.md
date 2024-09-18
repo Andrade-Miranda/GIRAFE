@@ -29,6 +29,36 @@ You can download the dataset files directly from Zenodo.
 
 For more information and specific setup instructions, refer to the dataset documentation on Zenodo.
 
+## Installation
+
+To set up the project using Conda, follow these steps:
+
+```bash
+# Clone the repository
+https://github.com/Andrade-Miranda/GIRAFE.git
+cd GIRAFE
+
+# Create a Conda environment from the .yml file
+conda env create -f environment.yml
+
+# Activate the Conda environment
+conda activate your-env-name
+```
+
+## Usage
+
+Each script can be run independently, depending on the specific analysis you wish to perform. Here are the general steps to follow:
+
+1. **Prepare Your Data:** Ensure the GIRAFE database is available either inside the GIRAFE repository or in any other location.
+2. **Configure Hyperparameters:** Adjust models hyperparameters inside spripts.
+3. **Run the Script:** Execute the script using a Python interpreter. For example:
+
+   ```bash
+   python DL_code/train.py 
+   python DL_code/inference.py --data_dir --model_dir Unet_8_100_0.0002_256_Baseline
+   ```
+`training.py` and `inference.py` scripts have the data_dir path set to the default value ../GIRAFE, but you can change it using the argument --data_dir <GIRAFE path>. After training, `training.py` generates a ./DL_code/Results directory where the models are saved. `inference.py` requires the innest directory name containing the model to be passed as argument using --model_dir.
+
 <h2><u>How to Cite</u></h2>
 If you use the CUCO Database in your research or projects, we kindly request that you cite it to give credit to the contributors. Please use the following references to cite the database:
 
