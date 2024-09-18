@@ -2,7 +2,7 @@
 #Setup Imports
 import os
 import json
-
+import argparse
 from PIL import Image
 from monai import transforms
 
@@ -41,20 +41,12 @@ def restore_Model(file,model,device):
     return model
 #############################################################################
 
-######Naive load data - only one fold #######################################
-def datafold_read(datalist):
-    with open(datalist) as f:
-        json_data = json.load(f)
-
-    test= json_data["test"]
-    return test
-##############################################################################
-
 ## Setup dataloader ####################################################################################################################   
-def get_loader(json_list, roi):  
-    with open(json_list) as f:
+def get_loader(datalist, roi): 
+    data_partition = os.path.join(datalist,'Training','training.json') 
+    with open(data_partition) as f:
         json_data = json.load(f)
-        test_files= json_data["test"]
+    test_files= set_fullpath(datalist,json_data["test"])
   
     val_transform = transforms.Compose(
         [
@@ -78,12 +70,19 @@ def get_loader(json_list, roi):
 
     return test_loader
 
-
+def set_fullpath(data_dir,files):
+    files_out=[]
+    for i in range(len(files)):
+        img_dir = {"image": [],"label": []}
+        img_dir['image'] = os.path.join(data_dir,'Training','imagesTr',files[i])
+        img_dir['label'] = os.path.join(data_dir,'Training','labelsTr',files[i])
+    files_out.append(img_dir)
+    return files_out
 
 ## Define test  ####################################################################################################
 def test_data(model, loader, acc_func,model_name, nameRun,device,model_inferer=None, post_trans=None):
     
-    pathmodel = os.path.join(os.getcwd(),'GIRAFE','DL_code',"Results",model_name,nameRun,'model.pt')
+    pathmodel = os.path.join(os.getcwd(),'DL_code',"Results",model_name,nameRun,'model.pt')
     model=restore_Model(pathmodel,model,device)
     model.eval()
     with torch.no_grad():
@@ -95,7 +94,7 @@ def test_data(model, loader, acc_func,model_name, nameRun,device,model_inferer=N
             val_output_convert = [post_trans(val_pred_tensor) for val_pred_tensor in val_outputs_list]
 
             acc_func(y_pred=val_output_convert, y=val_labels_list)
-            filename=os.path.join(os.getcwd(),'GIRAFE','DL_code',"Results",model_name,nameRun,batch_data['image_meta_dict']['filename_or_obj'][0].split('/')[-1].split('.')[0]+'.png')
+            filename=os.path.join(os.getcwd(),'DL_code',"Results",model_name,nameRun,batch_data['image_meta_dict']['filename_or_obj'][0].split('/')[-1].split('.')[0]+'.png')
 
             im = Image.fromarray(val_output_convert[0][0].detach().cpu().numpy().astype(np.uint8)*255)
             im.save(filename)
@@ -114,20 +113,25 @@ def test_data(model, loader, acc_func,model_name, nameRun,device,model_inferer=N
 if __name__ == "__main__":
 
     #######################################################################################################
+    parser = argparse.ArgumentParser(description='Command Line Arguments')
+    parser.add_argument("--data_dir", type=str, required=False,default='../GIRAFE/')
+    parser.add_argument("--model_dir", type=str, required=False,default='Unet_8_100_0.0002_256_Baseline')
+    
+    opt = parser.parse_args()
     ## Set dataset root directory and hyper-parameters
-    json_list = os.path.join(os.getcwd(),'GIRAFE/GIRAFE/Training/training.json')
+    
     roi = (256, 256)  
     batch_size = 8
     channels=(16,32,64,128)
     strides=(2,2,2)
-    nameRun='Unet_16_100_0.0002_256_Baseline'
+    nameRun=opt.model_dir
     #######################################################################################################
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_name=nameRun.split('_')[0]
 
 #######Data Loader##################
-    test_loader = get_loader(json_list, roi) 
+    test_loader = get_loader(opt.data_dir, roi) 
 
 #######Model##################
     if model_name=='Unet':
