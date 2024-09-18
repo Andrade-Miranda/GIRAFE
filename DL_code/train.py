@@ -68,13 +68,25 @@ def restore_Model(file,model,opt):
 
 ######Naive load data - only one fold #######################################
 def datafold_read(datalist):
-    with open(datalist) as f:
+    
+    data_partition = os.path.join(datalist,'Training','training.json')
+    with open(data_partition) as f:
         json_data = json.load(f)
 
-    train = json_data["Training"]
-    val = json_data["Val"]
-    test= json_data["test"]
+    train = set_fullpath(datalist,json_data["training"])
+    val = set_fullpath(datalist,json_data["Val"])
+    test= set_fullpath(datalist,json_data["test"])
     return train, val, test
+
+def set_fullpath(data_dir,files):
+    files_out=[]
+    for i in range(len(files)):
+        img_dir = {"image": [],"label": []}
+        img_dir['image'] = os.path.join(data_dir,'Training','imagesTr',files[i])
+        img_dir['label'] = os.path.join(data_dir,'Training','labelsTr',files[i])
+    files_out.append(img_dir)
+    return files_out
+
 ##############################################################################
 
 
@@ -88,9 +100,8 @@ def save_checkpoint(model, epoch,opt, filename="model.pt", best_acc=0):
    
  
 ## Setup dataloader ####################################################################################################################   
-def get_loader(batch_size, json_list, roi,MoreDA):  
-    datalist_json = json_list
-    train_files, validation_files,test_files = datafold_read(datalist=datalist_json)
+def get_loader(batch_size, data_dir, roi,MoreDA):  
+    train_files, validation_files,test_files = datafold_read(datalist=data_dir)
   
     train_transform = transforms.Compose(
         [  
@@ -370,8 +381,7 @@ if __name__ == "__main__":
 
 # acquire and parse input and output paths
     parser = argparse.ArgumentParser(description='Command Line Arguments')
-    parser.add_argument("--json_list", type=str, required=False,default='../GIRAFE/Training/training.json',
-                        help="Path of the json file used for training, validation and test")
+    parser.add_argument("--data_dir", type=str, required=False,default='../GIRAFE/'),
     parser.add_argument("--roi", type=int, nargs=3, default= (256, 256) , help='Image Size')
     parser.add_argument('--batch_size', type=int, default=8, help='# the batchsize')
     parser.add_argument('--max_epochs', type=int, default=100, help='number of epochs')
@@ -422,7 +432,7 @@ if __name__ == "__main__":
         os.makedirs(os.path.join(os.getcwd(),"Results",opt.model_name,opt.nameRun))
 
 #######Data Loader##################
-    train_loader, val_loader, test_loader = get_loader(opt.batch_size, opt.json_list, opt.roi,opt.MoreDA) 
+    train_loader, val_loader, test_loader = get_loader(opt.batch_size, opt.data_dir, opt.roi,opt.MoreDA) 
 
 #######Model##################
     if opt.model_name=='Unet':
