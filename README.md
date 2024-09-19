@@ -55,7 +55,7 @@ Each script can be run independently, depending on the specific analysis you wis
 
    ```bash
    python DL_code/train.py 
-   python DL_code/inference.py --data_dir --model_dir Unet_8_100_0.0002_256_Baseline
+   python DL_code/inference.py --model_dir Unet_8_100_0.0002_256_Baseline
    ```
 `training.py` and `inference.py` scripts have the data_dir path set to the default value ../GIRAFE, but you can change it using the argument --data_dir <GIRAFE path>. After training, `training.py` generates a ./DL_code/Results directory where the models are saved. `inference.py` requires the innest directory name containing the model to be passed as argument using --model_dir.
 
