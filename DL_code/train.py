@@ -80,11 +80,11 @@ def datafold_read(datalist):
 
 def set_fullpath(data_dir,files):
     files_out=[]
+    img_dir = {"image": [],"label": []}
     for i in range(len(files)):
-        img_dir = {"image": [],"label": []}
         img_dir['image'] = os.path.join(data_dir,'Training','imagesTr',files[i])
         img_dir['label'] = os.path.join(data_dir,'Training','labelsTr',files[i])
-    files_out.append(img_dir)
+        files_out.append(img_dir)
     return files_out
 
 ##############################################################################
@@ -382,7 +382,7 @@ if __name__ == "__main__":
 # acquire and parse input and output paths
     parser = argparse.ArgumentParser(description='Command Line Arguments')
     parser.add_argument("--data_dir", type=str, required=False,default='../GIRAFE/'),
-    parser.add_argument("--roi", type=int, nargs=3, default= (256, 256) , help='Image Size')
+    parser.add_argument("--roi", type=int, nargs=2, default= (256, 256) , help='Image Size')
     parser.add_argument('--batch_size', type=int, default=8, help='# the batchsize')
     parser.add_argument('--max_epochs', type=int, default=100, help='number of epochs')
     parser.add_argument('--val_every', type=int, default=2, help='number of epochs to wait to perform validation')
