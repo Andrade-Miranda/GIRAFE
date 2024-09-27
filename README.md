@@ -39,7 +39,7 @@ https://github.com/Andrade-Miranda/GIRAFE.git
 cd GIRAFE
 
 # Create a Conda environment from the .yml file
-conda env create -f environment.yml
+conda env create -f GIRAFE.yml
 
 # Activate the Conda environment
 conda activate your-env-name
