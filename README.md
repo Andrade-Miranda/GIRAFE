@@ -85,6 +85,7 @@ We'd like to acknowledge and express our gratitude to everyone who has contribut
 If you have questions or need further assistance, please feel free to reach out to us:
 
 Email: andradema@univ-brest.fr, ignacio.godino@upm.es, julian.arias@upm.es
+
 GitHub Issues: Report an Issue
 
 Thank you for using the GIRAFE Database! We hope you find it valuable for your research and projects.
