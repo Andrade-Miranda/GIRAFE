@@ -4,7 +4,7 @@
 
 <img src="GIRAFE.png" alt="GIRAFE" width="300"/>
 
-<div style="text-align: justify;">
+<div align="justify">
 Welcome to the GIRAFE Database repository! This comprehensive collection of code will guide you in using the dataset, setting up the foundation for managing results, and training deep learning models. The GIRAFE dataset includes 65 high-speed videoendoscopic recordings from a cohort of 50 patients (30 female, 20 male). It comprises 15 recordings from healthy controls, 26 from patients with diagnosed voice disorders, and 24 from individuals with unknown health conditions. All recordings were manually annotated by an expert, including masks for the semantic segmentation of the glottal gap. The repository also provides automatic segmentation of the glottal area using various state-of-the-art approaches.
 </div>
 
