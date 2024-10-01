@@ -9,18 +9,17 @@ Welcome to the GIRAFE Database repository! This comprehensive collection of code
 </div>
 
 <h2><u>Repository Structure</u></h2>
-
-1. **DL_code folder:**
-
+<div align="justify">
   
-2. **Matlab_code folder:**
+1. **DL_code folder:** contains the framework for using the dataset to train deep learning models (`train.py`) and to perform inference (`inference.py`). Two deep learning models were used: Unet and SwinV2, both implemented using the MONAI and TIMM Python packages. 
 
+2. **Matlab_code folder:** contains the .mat files needed to generate the facilitative playbacks and trajectory plots. Users can input their custom segmentation results in AVI format and run the script `Main_segmentation.m` to generate the playbacks.
 
-3. **Matlab_code.ipynb:**
+3. **Matlab_code.ipynb:** notebook explains how to use the MATLAB code results and visualize the different playbacks.
 
+4. **Seg_FP-Results.ipynb:** notebook guides users in visualizing the results from the automatic segmentation methods included in the GIRAFE dataset.
 
-4. **Seg_FP-Results.ipynb:**
-
+</div>
 
 <h2><u>Quick Start</u></h2>
 
@@ -60,7 +59,7 @@ Each script can be run independently, depending on the specific analysis you wis
    python DL_code/train.py 
    python DL_code/inference.py --model_dir Unet_8_100_0.0002_256_Baseline
    ```
-`training.py` and `inference.py` scripts have the data_dir path set to the default value ../GIRAFE, but you can change it using the argument --data_dir <GIRAFE path>. After training, `training.py` generates a ./DL_code/Results directory where the models are saved. `inference.py` requires the innest directory name containing the model to be passed as argument using --model_dir.
+`training.py` and `inference.py` scripts have the data_dir path set to the default value ../GIRAFE, but you can change it using the argument --data_dir <GIRAFE path>. After training, `training.py` generates a ./DL_code/Results directory where the models are saved. The `inference.py` requires the innermost directory name containing the model to be passed as an argument using --model_dir.
 
 <h2><u>How to Cite</u></h2>
 If you use the CUCO Database in your research or projects, we kindly request that you cite it to give credit to the contributors. Please use the following references to cite the database:
