@@ -62,23 +62,29 @@ Each script can be run independently, depending on the specific analysis you wis
 `training.py` and `inference.py` scripts have the data_dir path set to the default value ../GIRAFE, but you can change it using the argument --data_dir <GIRAFE path>. After training, `training.py` generates a ./DL_code/Results directory where the models are saved. The `inference.py` requires the innermost directory name containing the model to be passed as an argument using --model_dir.
 
 <h2><u>How to Cite</u></h2>
-If you use the CUCO Database in your research or projects, we kindly request that you cite it to give credit to the contributors. Please use the following references to cite the database:
+If you use the GIRAFE Database in your research or projects, we kindly request that you cite it to give credit to the contributors. Please use the following references to cite the database:
 
 1. **Zenodo Dataset**:  
    To cite the dataset available on Zenodo, use the provided DOI:
-   > Hernández-García, E., Guerrero-López, A., Arias-Londoño, J. D., & Godino Llorente, J. I. (2024). CUCO Database: A voice and speech corpus of patients who underwent upper airway surgery in pre- and post-operative states [Data set]. Zenodo. [https://doi.org/10.5281/zenodo.10256802](https://doi.org/10.5281/zenodo.10256802)
+   > Andrade-Miranda, G., Arias-Londoño, J. D., & Godino Llorente, J. I. (2024). GIRAFE: Glottal Imaging Repository for Advanced Segmentation, Analysis, and Facilitative Playbacks Evaluation 
 
 2. **Scientific Data Paper**:  
    Additionally, cite the associated paper in the *Scientific Data* journal where the database is described in detail:
-   > Hernández-García, E., Guerrero-López, A., Arias-Londoño, J.D. et al. A voice and speech corpus of patients who underwent upper airway surgery in pre- and post-operative states. *Sci Data* 11, 746 (2024). [https://doi.org/10.1038/s41597-024-03540-5](https://doi.org/10.1038/s41597-024-03540-5)
+   >  Andrade-Miranda, G., Chatzipapas, K., Arias-Londoño, J.D. & Godino Llorente, J. I. GIRAFE: Glottal Imaging Repository for Advanced Segmentation, Analysis, and Facilitative Playbacks Evaluation. 
 
 Citing both the Zenodo dataset and the journal paper helps acknowledge the work of the contributors and ensures proper recognition in the academic community.
 
 
-<h2><u>Usage</u></h2>
-
 <h2><u>License</u></h2>
+MIT LICENSE
 
 <h2><u>Credits</u></h2>
+We'd like to acknowledge and express our gratitude to everyone who has contributed to this project. Your efforts and support are highly appreciated.
 
 <h2><u>Contact Information</u></h2>
+If you have questions or need further assistance, please feel free to reach out to us:
+
+Email: andradema@univ-brest.fr, ignacio.godino@upm.es, julian.arias@upm.es
+GitHub Issues: Report an Issue
+
+Thank you for using the GIRAFE Database! We hope you find it valuable for your research and projects.
