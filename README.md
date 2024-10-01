@@ -4,7 +4,9 @@
 
 <img src="GIRAFE.png" alt="GIRAFE" width="300"/>
 
-Welcome to the GIRAFE Database repository! This is a comprehensive collection of code and data used for cleaning and calculating the CUCO database. The database comprises recordings of patients and control individuals, with voice samples taken at three different time points: 2 weeks before surgery, 2 weeks after surgery, and 3 months after surgery. The surgeries include FESS, Tonsillectomy, Septoplasty, and a control group.
+<div style="text-align: justify;">
+Welcome to the GIRAFE Database repository! This comprehensive collection of code will guide you in using the dataset, setting up the foundation for managing results, and training deep learning models. The GIRAFE dataset includes 65 high-speed videoendoscopic recordings from a cohort of 50 patients (30 female, 20 male). It comprises 15 recordings from healthy controls, 26 from patients with diagnosed voice disorders, and 24 from individuals with unknown health conditions. All recordings were manually annotated by an expert, including masks for the semantic segmentation of the glottal gap. The repository also provides automatic segmentation of the glottal area using various state-of-the-art approaches.
+</div>
 
 <h2><u>Repository Structure</u></h2>
 
@@ -24,7 +26,8 @@ Welcome to the GIRAFE Database repository! This is a comprehensive collection of
 
 The **GIRAFE** Database is available on Zenodo with a Digital Object Identifier (DOI) to ensure easy access and citation. To access the database, follow these steps:
 
-Visit the Zenodo page for the **GIRAFE** Database using the following link: GIRAFE Database on Zenodo
+Visit the Zenodo page for the **GIRAFE** Database using the following link: https://zenodo.org/records/13773163 
+
 You can download the dataset files directly from Zenodo.
 
 For more information and specific setup instructions, refer to the dataset documentation on Zenodo.
