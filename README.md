@@ -66,7 +66,23 @@ If you use the GIRAFE Database in your research or projects, we kindly request t
 
 1. **Zenodo Dataset**:  
    To cite the dataset available on Zenodo, use the provided DOI:
-   > Andrade-Miranda, G., Arias-Londoño, J. D., & Godino Llorente, J. I. (2024). GIRAFE: Glottal Imaging Repository for Advanced Segmentation, Analysis, and Facilitative Playbacks Evaluation 
+   > Andrade-Miranda, G., Arias-Londoño, J. D., & Godino Llorente, J. I. (2024). GIRAFE: Glottal Imaging Repository for Advanced Segmentation, Analysis, and Facilitative Playbacks Evaluation
+
+2. **ArXiV Paper**:  
+   Additionally, cite the associated ArXiV paper where the database is described in detail:
+
+``` python
+@misc{andrademiranda2024GIRAFE,
+      title={GIRAFE: Glottal Imaging Dataset for Advanced Segmentation, Analysis, and Facilitative Playbacks Evaluation}, 
+      author={G. Andrade-Miranda and K. Chatzipapas and J. D. Arias-Londoño and J. I. Godino-Llorente},
+      year={2024},
+      eprint={2412.15054},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2412.15054}, 
+}
+```
+
 
 
 <h2><u>License</u></h2>
